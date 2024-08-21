@@ -662,11 +662,13 @@ int main(int argc, char *argv[])
 		snprintf(hist_name, sizeof(hist_name), "/tmp/.nstat.u%d", getuid());
 
 	if (reset_history)
+		// 有r参数时，删除历史文件
 		unlink(hist_name);
 
 	if (!ignore_history || !no_update) {
+		// 对于r或a，都没s，no_update=0，会走到这个逻辑
 		struct stat stb;
-
+		// 打开历史文件
 		fd = open(hist_name, O_RDWR|O_CREAT|O_NOFOLLOW, 0600);
 		if (fd < 0) {
 			perror("nstat: open history file");
@@ -689,6 +691,7 @@ int main(int argc, char *argv[])
 			exit(-1);
 		}
 		if (!ignore_history) {
+			// 有a时不走这，没a时走这
 			FILE *tfp;
 			long uptime = -1;
 
